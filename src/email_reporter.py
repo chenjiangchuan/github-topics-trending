@@ -63,7 +63,6 @@ class EmailReporter:
 
     def _get_header(self, date: str) -> str:
         """生成 HTML 头部"""
-        t = self.theme
         return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -75,159 +74,188 @@ class EmailReporter:
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: {t['bg']};
+            background-color: #eef3f8;
+            color: #18212f;
             -webkit-font-smoothing: antialiased;
         }}
         .container {{
-            max-width: 640px;
+            max-width: 680px;
             margin: 0 auto;
-            background-color: {t['card']};
+            background-color: #f6f8fb;
         }}
         .header {{
-            background: linear-gradient(135deg, {t['primary']} 0%, {t['secondary']} 100%);
+            background: linear-gradient(135deg, #0969da 0%, #54aeff 100%);
             color: white;
-            padding: 40px 30px;
-            text-align: center;
+            padding: 38px 40px 34px;
+            text-align: left;
         }}
         .header h1 {{
             margin: 0;
-            font-size: 26px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: 0;
         }}
         .header p {{
-            margin: 8px 0 0;
-            font-size: 14px;
-            opacity: 0.8;
+            margin: 12px 0 0;
+            font-size: 17px;
+            opacity: 0.86;
             font-weight: 400;
         }}
         .section {{
-            padding: 28px 30px;
-            border-bottom: 1px solid {t['border']};
+            padding: 32px 40px 40px;
+            border-bottom: 1px solid #d8e1ec;
         }}
         .section:last-child {{
             border-bottom: none;
         }}
+        .section-heading {{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0 0 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #d8e1ec;
+        }}
         .section-title {{
-            margin: 0 0 20px;
-            font-size: 15px;
-            font-weight: 600;
-            color: {t['text']};
+            margin: 0;
+            font-size: 19px;
+            font-weight: 700;
+            color: #1f2937;
             text-transform: uppercase;
             letter-spacing: 1px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid {t['primary']};
+        }}
+        .section-caption {{
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 500;
         }}
         .repo-card {{
             margin-bottom: 16px;
-            padding: 0;
-            background-color: {t['card']};
+            padding: 20px 22px;
+            background-color: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 12px;
+            box-shadow: 0 8px 22px rgba(16, 24, 40, 0.07);
         }}
         .repo-card:last-child {{
             margin-bottom: 0;
         }}
-        .repo-main {{
+        .repo-card.featured {{
+            border-color: #9cc9ff;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        }}
+        .repo-top {{
             display: flex;
-            align-items: baseline;
-            padding: 14px 16px;
-            background-color: {t['bg']};
-            border-radius: 6px;
-            border-left: 3px solid {t['primary']};
+            align-items: flex-start;
+            gap: 14px;
         }}
         .repo-rank {{
+            flex: 0 0 auto;
+            min-width: 42px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background-color: #e8f2ff;
+            color: #0969da;
             font-size: 14px;
-            font-weight: 700;
-            color: {t['text']};
-            min-width: 32px;
+            font-weight: 750;
+            text-align: center;
+        }}
+        .repo-main {{
+            min-width: 0;
+            flex: 1;
+        }}
+        .repo-title-row {{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }}
         .repo-name {{
-            font-size: 15px;
-            font-weight: 600;
-            color: {t['text']};
-            flex-grow: 1;
-            margin: 0 10px;
+            color: #111827;
+            font-size: 21px;
+            line-height: 1.25;
+            font-weight: 760;
         }}
         .repo-name a {{
-            color: {t['text']};
+            color: #111827;
             text-decoration: none;
         }}
         .repo-name a:hover {{
             text-decoration: underline;
         }}
         .repo-stats {{
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 13px;
+            margin-left: auto;
+            white-space: nowrap;
+            color: #374151;
+            font-size: 15px;
+            font-weight: 650;
         }}
         .rank-change {{
             font-weight: 600;
-            padding: 2px 6px;
-            border-radius: 3px;
+            padding: 3px 8px;
+            border-radius: 999px;
             font-size: 12px;
         }}
         .rank-up {{
-            color: {t['success']};
-            background-color: rgba(35, 134, 54, 0.2);
+            color: #166534;
+            background-color: #dcfce7;
         }}
         .rank-down {{
-            color: {t['danger']};
-            background-color: rgba(248, 81, 73, 0.2);
-        }}
-        .rank-same {{
-            color: {t['text_secondary']};
-            background-color: {t['border']};
+            color: #b91c1c;
+            background-color: #fee2e2;
         }}
         .stars {{
-            color: {t['text_secondary']};
-            font-size: 13px;
-        }}
-        .repo-content {{
-            padding: 12px 16px 0;
+            color: #374151;
+            font-size: 15px;
+            font-weight: 650;
         }}
         .repo-summary {{
-            color: {t['text_secondary']};
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 8px;
+            margin: 14px 0 8px;
+            color: #273449;
+            font-size: 16px;
+            line-height: 1.55;
+            font-weight: 650;
         }}
         .repo-meta {{
-            font-size: 13px;
-            color: {t['text_secondary']};
-            margin-bottom: 10px;
+            margin: 0;
+            color: #596579;
+            font-size: 14px;
+            line-height: 1.65;
         }}
         .badge {{
             display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 500;
-            margin-right: 6px;
-            margin-bottom: 4px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 650;
+            margin-right: 8px;
+            margin-bottom: 8px;
         }}
         .badge-category {{
-            background-color: {t['primary']};
-            color: white;
+            background-color: #dbeafe;
+            color: #0757b8;
         }}
         .badge-language {{
-            background-color: {t['border']};
-            color: {t['text']};
+            background-color: #f3f4f6;
+            color: #374151;
         }}
         .badge-new {{
-            background-color: {t['success']};
-            color: white;
+            background-color: #dcfce7;
+            color: #166534;
         }}
         .solves-list {{
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
+            display: inline;
         }}
         .solve-tag {{
-            background-color: {t['border']};
-            color: {t['text_secondary']};
-            padding: 4px 10px;
-            border-radius: 4px;
+            display: inline-block;
+            background-color: #eef2f6;
+            color: #4b5563;
+            padding: 5px 10px;
+            border-radius: 999px;
             font-size: 12px;
+            font-weight: 650;
+            margin-right: 8px;
+            margin-bottom: 8px;
         }}
         .stats-grid {{
             display: grid;
@@ -237,28 +265,30 @@ class EmailReporter:
         .stat-item {{
             text-align: center;
             padding: 16px;
-            background-color: {t['bg']};
-            border-radius: 8px;
+            background-color: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 12px;
+            box-shadow: 0 8px 22px rgba(16, 24, 40, 0.06);
         }}
         .stat-value {{
             font-size: 24px;
             font-weight: 700;
-            color: {t['primary']};
+            color: #0969da;
         }}
         .stat-label {{
             font-size: 12px;
-            color: {t['text_secondary']};
+            color: #596579;
             margin-top: 4px;
         }}
         .footer {{
             text-align: center;
             padding: 28px 20px;
             font-size: 12px;
-            color: {t['text_secondary']};
-            background-color: {t['bg']};
+            color: #596579;
+            background-color: #eef3f8;
         }}
         .footer a {{
-            color: {t['primary']};
+            color: #0969da;
             text-decoration: none;
             font-weight: 500;
         }}
@@ -266,14 +296,47 @@ class EmailReporter:
             text-decoration: underline;
         }}
         .compact-card {{
-            padding: 12px 14px;
+            padding: 14px 16px;
             margin-bottom: 8px;
-            background-color: {t['bg']};
-            border-radius: 6px;
-            border-left: 3px solid {t['border']};
+            background-color: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(16, 24, 40, 0.05);
         }}
         .compact-card:last-child {{
             margin-bottom: 0;
+        }}
+        .compact-main {{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }}
+        .compact-rank {{
+            color: #0969da;
+            font-weight: 700;
+            min-width: 34px;
+            font-size: 13px;
+        }}
+        .compact-name {{
+            flex-grow: 1;
+            margin: 0 8px;
+        }}
+        .compact-name a {{
+            color: #111827;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 650;
+        }}
+        .compact-meta {{
+            color: #596579;
+            font-size: 12px;
+            white-space: nowrap;
+        }}
+        .compact-summary {{
+            padding: 8px 0 0 44px;
+            font-size: 13px;
+            color: #596579;
+            line-height: 1.5;
         }}
     </style>
 </head>
@@ -369,13 +432,13 @@ class EmailReporter:
         language = repo.get("language", "")
         url = repo.get("url", f"https://github.com/{repo_name}")
 
-        # 星标变化指示
+        # 星标变化指示；无变化时不展示占位符，避免邮件里出现突兀的灰色 "-"
         if stars_delta > 0:
             stars_indicator = f'<span class="rank-change rank-up">+{format_number(stars_delta)}</span>'
         elif stars_delta < 0:
             stars_indicator = f'<span class="rank-change rank-down">{format_number(stars_delta)}</span>'
         else:
-            stars_indicator = '<span class="rank-change rank-same">-</span>'
+            stars_indicator = ""
 
         # 语言标签
         language_badge = ""
@@ -401,27 +464,31 @@ class EmailReporter:
 
             detail_parts = []
             if summary:
-                detail_parts.append(f'<p style="margin: 0 0 8px; color: {self.theme["text_secondary"]}; font-size: 14px; line-height: 1.5;">{summary}</p>')
+                detail_parts.append(f'<p class="repo-summary">{summary}</p>')
             if description:
-                detail_parts.append(f'<p style="margin: 0; color: {self.theme["text_secondary"]}; font-size: 13px; line-height: 1.5; opacity: 0.8;">{description}</p>')
+                detail_parts.append(f'<p class="repo-meta">{description}</p>')
 
             details_html = "\n".join(detail_parts)
 
-        return f"""        <div class="repo-card">
-            <div class="repo-main">
+        featured_class = " featured" if rank == 1 else ""
+
+        return f"""        <div class="repo-card{featured_class}">
+            <div class="repo-top">
                 <span class="repo-rank">#{rank}</span>
-                <span class="repo-name"><a href="{url}">{repo_name}</a></span>
-                <div class="repo-stats">
-                    {stars_indicator}
-                    <span class="stars">{format_number(stars)}</span>
-                </div>
-            </div>
-            <div class="repo-content">
-                {details_html}
-                <div style="margin-top: 10px;">
-                    {category_badge}
-                    {language_badge}
-                    {solves_html}
+                <div class="repo-main">
+                    <div class="repo-title-row">
+                        <span class="repo-name"><a href="{url}">{repo_name}</a></span>
+                        <div class="repo-stats">
+                            {stars_indicator}
+                            <span class="stars">★ {format_number(stars)}</span>
+                        </div>
+                    </div>
+                    {details_html}
+                    <div style="margin-top: 16px;">
+                        {category_badge}
+                        {language_badge}
+                        {solves_html}
+                    </div>
                 </div>
             </div>
         </div>"""
@@ -443,16 +510,17 @@ class EmailReporter:
 
         summary_html = ""
         if repo.get("summary"):
-            summary_html = f'<div style="padding: 8px 14px 0; font-size: 13px; color: {self.theme["text_secondary"]}; line-height: 1.5;">{repo.get("summary")}</div>'
+            summary_html = f'<div class="compact-summary">{repo.get("summary")}</div>'
 
         return f"""            <div class="compact-card">
-                {change_html}
-                <span style="font-weight: 600; min-width: 32px; font-size: 13px; color: {self.theme['text']};">#{rank}</span>
-                <span style="flex-grow: 1; margin: 0 10px;">
-                    <a href="{url}" style="color: {self.theme['text']}; text-decoration: none; font-size: 14px; font-weight: 500;">{repo_name}</a>
-                </span>
-                <span style="color: {self.theme['text_secondary']}; font-size: 12px;">{format_number(stars)}</span>
-            </div>{summary_html}"""
+                <div class="compact-main">
+                    {change_html}
+                    <span class="compact-rank">#{rank}</span>
+                    <span class="compact-name"><a href="{url}">{repo_name}</a></span>
+                    <span class="compact-meta">★ {format_number(stars)}</span>
+                </div>
+                {summary_html}
+            </div>"""
 
     def _format_active_card(self, repo: Dict) -> str:
         """格式化活跃项目卡片"""
@@ -468,20 +536,25 @@ class EmailReporter:
 
         summary_html = ""
         if repo.get("summary"):
-            summary_html = f'<div style="padding: 8px 14px 0; font-size: 13px; color: {self.theme["text_secondary"]}; line-height: 1.5;">{repo.get("summary")}</div>'
+            summary_html = f'<div class="compact-summary">{repo.get("summary")}</div>'
 
         return f"""            <div class="compact-card">
-                <span style="flex-grow: 1; margin: 0 10px;">
-                    <a href="{url}" style="color: {self.theme['text']}; text-decoration: none; font-size: 14px; font-weight: 500;">{repo_name}</a>
-                </span>
-                <span style="color: {self.theme['text_secondary']}; font-size: 12px;">{format_number(stars)}</span>
-                <span style="color: {self.theme['text_secondary']}; font-size: 11px; margin-left: 8px;">更新: {time_ago}</span>
-            </div>{summary_html}"""
+                <div class="compact-main">
+                    <span class="compact-name"><a href="{url}">{repo_name}</a></span>
+                    <span class="compact-meta">★ {format_number(stars)}</span>
+                    <span class="compact-meta">更新: {time_ago}</span>
+                </div>
+                {summary_html}
+            </div>"""
 
     def _section_html(self, title: str, content: str) -> str:
         """生成一个完整的 section"""
+        caption_html = '<span class="section-caption">按 stars 排名</span>' if "Top 20" in title else ""
         return f"""        <div class="section">
-            <h2 class="section-title">{title}</h2>
+            <div class="section-heading">
+                <h2 class="section-title">{title}</h2>
+                {caption_html}
+            </div>
             {content}
         </div>"""
 
