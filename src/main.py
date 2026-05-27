@@ -164,9 +164,10 @@ def main():
         # 7. 发送邮件
         print(f"[步骤 7/9] 发送邮件...")
         sender = ResendSender(RESEND_API_KEY)
+        report_time = datetime.now(timezone.utc).strftime("%H:%M UTC")
         result = sender.send_email(
             to=EMAIL_TO,
-            subject=f"📊 GitHub Topics Daily - #{TOPIC} - {today}",
+            subject=f"📊 GitHub Topics Daily - #{TOPIC} - {today} {report_time}",
             html_content=html_content,
             from_email=RESEND_FROM_EMAIL
         )

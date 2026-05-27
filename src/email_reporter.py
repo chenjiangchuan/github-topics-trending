@@ -109,12 +109,13 @@ class EmailReporter:
             border-bottom: none;
         }}
         .section-heading {{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             margin: 0 0 18px;
             padding-bottom: 14px;
             border-bottom: 1px solid #d8e1ec;
+        }}
+        .section-heading-table {{
+            width: 100%;
+            border-collapse: collapse;
         }}
         .section-title {{
             margin: 0;
@@ -128,6 +129,8 @@ class EmailReporter:
             color: #6b7280;
             font-size: 13px;
             font-weight: 500;
+            text-align: right;
+            white-space: nowrap;
         }}
         .repo-card {{
             margin-bottom: 16px;
@@ -144,13 +147,17 @@ class EmailReporter:
             border-color: #9cc9ff;
             background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
         }}
-        .repo-top {{
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
+        .repo-layout {{
+            width: 100%;
+            border-collapse: collapse;
+        }}
+        .repo-rank-cell {{
+            width: 58px;
+            vertical-align: top;
+            padding: 0 14px 0 0;
         }}
         .repo-rank {{
-            flex: 0 0 auto;
+            display: inline-block;
             min-width: 42px;
             padding: 7px 10px;
             border-radius: 999px;
@@ -160,15 +167,18 @@ class EmailReporter:
             font-weight: 750;
             text-align: center;
         }}
+        .repo-body-cell {{
+            vertical-align: top;
+        }}
+        .repo-star-cell {{
+            width: 104px;
+            vertical-align: top;
+            text-align: right;
+            padding-left: 14px;
+            white-space: nowrap;
+        }}
         .repo-main {{
             min-width: 0;
-            flex: 1;
-        }}
-        .repo-title-row {{
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
         }}
         .repo-name {{
             color: #111827;
@@ -184,7 +194,6 @@ class EmailReporter:
             text-decoration: underline;
         }}
         .repo-stats {{
-            margin-left: auto;
             white-space: nowrap;
             color: #374151;
             font-size: 15px;
@@ -257,10 +266,13 @@ class EmailReporter:
             margin-right: 8px;
             margin-bottom: 8px;
         }}
-        .stats-grid {{
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+        .stats-table {{
+            width: 100%;
+            border-collapse: collapse;
+        }}
+        .stat-cell {{
+            width: 33.333%;
+            padding: 0 6px;
         }}
         .stat-item {{
             text-align: center;
@@ -296,8 +308,8 @@ class EmailReporter:
             text-decoration: underline;
         }}
         .compact-card {{
-            padding: 14px 16px;
-            margin-bottom: 8px;
+            padding: 16px 18px;
+            margin-bottom: 12px;
             background-color: #ffffff;
             border: 1px solid #d9e2ec;
             border-radius: 10px;
@@ -306,20 +318,20 @@ class EmailReporter:
         .compact-card:last-child {{
             margin-bottom: 0;
         }}
-        .compact-main {{
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .compact-table {{
+            width: 100%;
+            border-collapse: collapse;
         }}
         .compact-rank {{
             color: #0969da;
             font-weight: 700;
-            min-width: 34px;
+            width: 40px;
             font-size: 13px;
+            white-space: nowrap;
+            padding-right: 10px;
         }}
         .compact-name {{
-            flex-grow: 1;
-            margin: 0 8px;
+            padding: 0 8px;
         }}
         .compact-name a {{
             color: #111827;
@@ -331,12 +343,20 @@ class EmailReporter:
             color: #596579;
             font-size: 12px;
             white-space: nowrap;
+            text-align: right;
+            width: 120px;
         }}
         .compact-summary {{
-            padding: 8px 0 0 44px;
+            padding: 10px 0 0;
             font-size: 13px;
             color: #596579;
             line-height: 1.5;
+        }}
+        .compact-badge-cell {{
+            width: 62px;
+            padding-right: 12px;
+            white-space: nowrap;
+            vertical-align: top;
         }}
     </style>
 </head>
@@ -406,20 +426,28 @@ class EmailReporter:
         active_count = len(trends.get("active", []))
 
         return self._section_html("趋势概览", f"""
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-value">{new_count}</div>
-                <div class="stat-label">新晋项目</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">{rising_count}</div>
-                <div class="stat-label">上升项目</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">{active_count}</div>
-                <div class="stat-label">活跃项目</div>
-            </div>
-        </div>
+        <table class="stats-table" role="presentation">
+            <tr>
+                <td class="stat-cell">
+                    <div class="stat-item">
+                        <div class="stat-value">{new_count}</div>
+                        <div class="stat-label">新晋项目</div>
+                    </div>
+                </td>
+                <td class="stat-cell">
+                    <div class="stat-item">
+                        <div class="stat-value">{rising_count}</div>
+                        <div class="stat-label">上升项目</div>
+                    </div>
+                </td>
+                <td class="stat-cell">
+                    <div class="stat-item">
+                        <div class="stat-value">{active_count}</div>
+                        <div class="stat-label">活跃项目</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
         """)
 
     def _format_repo_card(self, repo: Dict, show_details: bool = True) -> str:
@@ -473,24 +501,30 @@ class EmailReporter:
         featured_class = " featured" if rank == 1 else ""
 
         return f"""        <div class="repo-card{featured_class}">
-            <div class="repo-top">
-                <span class="repo-rank">#{rank}</span>
-                <div class="repo-main">
-                    <div class="repo-title-row">
-                        <span class="repo-name"><a href="{url}">{repo_name}</a></span>
-                        <div class="repo-stats">
-                            {stars_indicator}
-                            <span class="stars">★ {format_number(stars)}</span>
+            <table class="repo-layout" role="presentation">
+                <tr>
+                    <td class="repo-rank-cell"><span class="repo-rank">#{rank}</span></td>
+                    <td class="repo-body-cell">
+                        <div class="repo-main">
+                            <div class="repo-name"><a href="{url}">{repo_name}</a></div>
                         </div>
-                    </div>
+                    </td>
+                    <td class="repo-star-cell">
+                        <div class="repo-stats">{stars_indicator} <span class="stars">★ {format_number(stars)}</span></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td class="repo-body-cell" colspan="2">
                     {details_html}
                     <div style="margin-top: 16px;">
                         {category_badge}
                         {language_badge}
                         {solves_html}
                     </div>
-                </div>
-            </div>
+                    </td>
+                </tr>
+            </table>
         </div>"""
 
     def _format_compact_card(self, repo: Dict, trend: str = None, is_new: bool = False) -> str:
@@ -508,18 +542,22 @@ class EmailReporter:
             stars_delta = repo.get("stars_delta", 0)
             change_html = f'<span class="rank-change rank-up">+{format_number(stars_delta)}</span>'
 
-        summary_html = ""
-        if repo.get("summary"):
-            summary_html = f'<div class="compact-summary">{repo.get("summary")}</div>'
+        summary = repo.get("summary", "")
+        summary_html = f'<div class="compact-summary">{summary}</div>' if summary else ""
 
         return f"""            <div class="compact-card">
-                <div class="compact-main">
-                    {change_html}
-                    <span class="compact-rank">#{rank}</span>
-                    <span class="compact-name"><a href="{url}">{repo_name}</a></span>
-                    <span class="compact-meta">★ {format_number(stars)}</span>
-                </div>
-                {summary_html}
+                <table class="compact-table" role="presentation">
+                    <tr>
+                        <td class="compact-badge-cell" rowspan="2">{change_html}</td>
+                        <td class="compact-rank">#{rank}</td>
+                        <td class="compact-name"><a href="{url}">{repo_name}</a></td>
+                        <td class="compact-meta">★ {format_number(stars)}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="2">{summary_html}</td>
+                    </tr>
+                </table>
             </div>"""
 
     def _format_active_card(self, repo: Dict) -> str:
@@ -534,17 +572,19 @@ class EmailReporter:
         if updated_at:
             time_ago = updated_at.split("T")[0]
 
-        summary_html = ""
-        if repo.get("summary"):
-            summary_html = f'<div class="compact-summary">{repo.get("summary")}</div>'
+        summary = repo.get("summary", "")
+        summary_html = f'<div class="compact-summary">{summary}</div>' if summary else ""
 
         return f"""            <div class="compact-card">
-                <div class="compact-main">
-                    <span class="compact-name"><a href="{url}">{repo_name}</a></span>
-                    <span class="compact-meta">★ {format_number(stars)}</span>
-                    <span class="compact-meta">更新: {time_ago}</span>
-                </div>
-                {summary_html}
+                <table class="compact-table" role="presentation">
+                    <tr>
+                        <td class="compact-name"><a href="{url}">{repo_name}</a></td>
+                        <td class="compact-meta">★ {format_number(stars)} &nbsp;&middot;&nbsp; 更新: {time_ago}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">{summary_html}</td>
+                    </tr>
+                </table>
             </div>"""
 
     def _section_html(self, title: str, content: str) -> str:
@@ -552,8 +592,12 @@ class EmailReporter:
         caption_html = '<span class="section-caption">按 stars 排名</span>' if "Top 20" in title else ""
         return f"""        <div class="section">
             <div class="section-heading">
-                <h2 class="section-title">{title}</h2>
-                {caption_html}
+                <table class="section-heading-table" role="presentation">
+                    <tr>
+                        <td><h2 class="section-title">{title}</h2></td>
+                        <td class="section-caption">{caption_html}</td>
+                    </tr>
+                </table>
             </div>
             {content}
         </div>"""
